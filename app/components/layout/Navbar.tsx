@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, Sun, Moon, Monitor } from "lucide-react";
+import { Menu as MenuIcon, X, Sun, Moon, Monitor } from "lucide-react";
 import { useI18n, useChangeLocale, useCurrentLocale } from "../../../locales/client";
 import ReactFlagsSelect from "react-flags-select";
 import { useTheme } from "next-themes";
 import AuthService from "../../services/auth";
 import { User } from "@supabase/supabase-js";
+import { Button, Menu, MenuItem } from "@mui/material";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,6 +18,7 @@ export default function Navbar() {
   const changeLocale = useChangeLocale();
   const locale = useCurrentLocale();
   const { theme, setTheme } = useTheme();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -45,11 +47,33 @@ export default function Navbar() {
           </button>
         )}
         {user ? (
-          <Link href="/profile">
-            <button className="px-4 py-2 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors">
+          <div>
+            <Button
+              aria-controls="simple-menu"
+              aria-haspopup="true"
+              onClick={(event) => setAnchorEl(event.currentTarget)}
+              className="px-4 py-2 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors"
+            >
               {t("navbar.profile")}
-            </button>
-          </Link>
+            </Button>
+            <Menu
+              id="simple-menu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={() => setAnchorEl(null)}
+            >
+              <MenuItem onClick={() => setAnchorEl(null)} component={Link} href="/profile">
+                {t("navbar.settings")}
+              </MenuItem>
+              <MenuItem onClick={() => setAnchorEl(null)} component={Link} href="/profile">
+                {t("navbar.my_collections")}
+              </MenuItem>
+              <MenuItem onClick={() => { setAnchorEl(null); AuthService.signOut(); }}>
+                {t("navbar.signout")}
+              </MenuItem>
+            </Menu>
+          </div>
         ) : (
           <Link href="/signin">
             <button className="px-4 py-2 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors">
@@ -60,7 +84,7 @@ export default function Navbar() {
       </div>
       <div className="md:hidden">
         <button onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? <X /> : <Menu />}
+          {isOpen ? <X /> : <MenuIcon />}
         </button>
       </div>
       {isOpen && (
@@ -87,11 +111,16 @@ export default function Navbar() {
             </button>
           )}
           {user ? (
-            <Link href="/profile">
-              <button className="px-4 py-2 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors w-full">
-                {t("navbar.profile")}
+            <div>
+              <Link href="/profile">
+                <button className="px-4 py-2 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors w-full">
+                  {t("navbar.profile")}
+                </button>
+              </Link>
+              <button onClick={() => { setIsOpen(false); AuthService.signOut(); }} className="px-4 py-2 rounded-md bg-red-600 text-white font-semibold hover:bg-red-700 transition-colors w-full mt-2">
+                {t("navbar.signout")}
               </button>
-            </Link>
+            </div>
           ) : (
             <Link href="/signin">
               <button className="px-4 py-2 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors w-full">
