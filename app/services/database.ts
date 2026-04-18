@@ -16,6 +16,7 @@ export interface DatabaseInterface {
   updateCollection(collectionId: string, name: string): Promise<Collection | null>;
   createCard(card: Card): Promise<Card | null>;
   getCards(collectionId: string): Promise<Card[]>;
+  deleteCard(cardId: string): Promise<void>;
 }
 
 class DatabaseService implements DatabaseInterface {
@@ -95,6 +96,13 @@ class DatabaseService implements DatabaseInterface {
       return [];
     }
     return data;
+  }
+
+  async deleteCard(cardId: string): Promise<void> {
+    const { error } = await this.supabase.from("cards").delete().eq("id", cardId);
+    if (error) {
+      console.error(error);
+    }
   }
 }
 
