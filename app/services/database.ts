@@ -19,7 +19,7 @@ export interface DatabaseInterface {
 }
 
 class DatabaseService implements DatabaseInterface {
-  private supabase = createClient();
+  public supabase = createClient();
 
   async createCollection(collection: Collection): Promise<Collection | null> {
     const { data, error } = await this.supabase

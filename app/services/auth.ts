@@ -10,7 +10,7 @@ export interface AuthInterface {
 }
 
 class AuthService implements AuthInterface {
-  private supabase = createClient();
+  public supabase = createClient();
 
   onAuthStateChanged(callback: (user: User | null) => void) {
     this.supabase.auth.onAuthStateChange((event, session) => {

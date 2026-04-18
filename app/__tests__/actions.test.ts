@@ -37,26 +37,29 @@ vi.mock("jszip", () => ({
 
 describe("actions", () => {
   it("should save flashcards", async () => {
-    const cards = [{ question: "q1", answer: "a1" }];
+    const cards = [{ question: "q1", answer: "a1", page: 1, title: "t1" }];
     const result = await saveFlashcards(cards);
     expect(result.error).toBeUndefined();
   });
 
   it("should parse a pdf file", async () => {
     const file = new File([""], "test.pdf", { type: "application/pdf" });
-    const text = await parseFile(file);
+    const { text, fileName } = await parseFile(file);
     expect(text).toBe("pdf text");
+    expect(fileName).toBe("test.pdf");
   });
 
   it("should parse a docx file", async () => {
     const file = new File([""], "test.docx", { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
-    const text = await parseFile(file);
+    const { text, fileName } = await parseFile(file);
     expect(text).toBe("docx text");
+    expect(fileName).toBe("test.docx");
   });
 
   it("should parse a pptx file", async () => {
     const file = new File([""], "test.pptx", { type: "application/vnd.openxmlformats-officedocument.presentationml.presentation" });
-    const text = await parseFile(file);
+    const { text, fileName } = await parseFile(file);
     expect(text).toBe("pptx text");
+    expect(fileName).toBe("test.pptx");
   });
 });

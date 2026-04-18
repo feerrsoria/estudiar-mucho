@@ -6,9 +6,24 @@ vi.mock("../components/ui/Globe", () => ({
   default: () => <div>Globe</div>
 }));
 
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: () => {},
+  }),
+}));
+
+vi.mock("next-international/client", () => ({
+  createI18nClient: () => ({
+    useI18n: () => (key: string) => key,
+    I18nProviderClient: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+    useChangeLocale: () => () => {},
+    useCurrentLocale: () => "en",
+  }),
+}));
+
 describe("Hero", () => {
   it("renders the hero component", () => {
     render(<Hero />);
-    expect(screen.getByText("Learn anything, faster.")).toBeInTheDocument();
+    expect(screen.getByText("hero.title")).toBeInTheDocument();
   });
 });
