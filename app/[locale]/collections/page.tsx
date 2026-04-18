@@ -14,6 +14,8 @@ export default function Collections() {
   const [filteredCollections, setFilteredCollections] = useState<Collection[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [editingCollection, setEditingCollection] = useState<Collection | null>(null);
+  const [newName, setNewName] = useState("");
   const t = useI18n();
 
   useEffect(() => {
@@ -41,6 +43,22 @@ export default function Collections() {
 
     setFilteredCollections(filtered);
   }, [searchTerm, sortOrder, collections]);
+
+  const handleEdit = (collection: Collection) => {
+    setEditingCollection(collection);
+    setNewName(collection.name);
+  };
+
+  const handleSave = async (collectionId: string) => {
+    const updatedCollection = await DatabaseService.updateCollection(collectionId, newName);
+    if (updatedCollection) {
+      const updatedCollections = collections.map((c) =>
+        c.id === updatedCollection.id ? { ...c, ...updatedCollection } : c
+      );
+      setCollections(updatedCollections);
+      setEditingCollection(null);
+    }
+  };
 
   return (
     <Container>
@@ -73,11 +91,25 @@ export default function Collections() {
         <div>
           {filteredCollections.map((collection) => (
             <div key={collection.id} className="p-4 border rounded-md mb-4">
-              <Typography variant="h5">{collection.name}</Typography>
-              <Typography variant="body2">{collection.file_name}</Typography>
-              <Typography variant="body2">Cards: {collection.card_count}</Typography>
-              {collection.created_at && (
-                <Typography variant="body2">Created at: {new Date(collection.created_at).toLocaleDateString()}</Typography>
+              {editingCollection?.id === collection.id ? (
+                <div>
+                  <TextField
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                  />
+                  <Button onClick={() => handleSave(collection.id!)}>Save</Button>
+                  <Button onClick={() => setEditingCollection(null)}>Cancel</Button>
+                </div>
+              ) : (
+                <div>
+                  <Typography variant="h5">{collection.name}</Typography>
+                  <Typography variant="body2">{collection.file_name}</Typography>
+                  <Typography variant="body2">Cards: {collection.card_count}</Typography>
+                  {collection.created_at && (
+                    <Typography variant="body2">Created at: {new Date(collection.created_at).toLocaleDateString()}</Typography>
+                  )}
+                  <Button onClick={() => handleEdit(collection)}>Edit</Button>
+                </div>
               )}
             </div>
           ))}

@@ -13,6 +13,7 @@ export interface Collection {
 export interface DatabaseInterface {
   createCollection(collection: Collection): Promise<Collection | null>;
   getCollections(userId: string): Promise<Collection[]>;
+  updateCollection(collectionId: string, name: string): Promise<Collection | null>;
   createCard(card: Card): Promise<Card | null>;
   getCards(collectionId: string): Promise<Card[]>;
 }
@@ -59,6 +60,20 @@ class DatabaseService implements DatabaseInterface {
     );
 
     return collectionsWithCardCount;
+  }
+
+  async updateCollection(collectionId: string, name: string): Promise<Collection | null> {
+    const { data, error } = await this.supabase
+      .from("collections")
+      .update({ name })
+      .eq("id", collectionId)
+      .select();
+
+    if (error) {
+      console.error(error);
+      return null;
+    }
+    return data[0];
   }
 
   async createCard(card: Card): Promise<Card | null> {
