@@ -3,10 +3,21 @@ import { generateObject } from 'ai';
 import { z } from 'zod'; 
 
 const GCP_PROJECT_ID = process.env.GCP_PROJECT_ID;
-
+// Parseamos la variable de entorno que contiene el JSON
+const GCP_CREDENTIALS = process.env.GCP_SERVICE_ACCOUNT_JSON 
+  ? JSON.parse(process.env.GCP_SERVICE_ACCOUNT_JSON) 
+  : undefined;
+if (GCP_CREDENTIALS && GCP_CREDENTIALS.private_key) {
+  // Reemplaza las barras escapadas por saltos de línea reales
+  GCP_CREDENTIALS.private_key = GCP_CREDENTIALS.private_key.replace(/\\n/g, '\n');
+}
 const vertex = createVertex({
   project: GCP_PROJECT_ID,
   location: 'us-central1',
+  // Pasamos las credenciales directamente aquí
+  googleAuthOptions: {
+    credentials: GCP_CREDENTIALS,
+  },
 });
 
 export const POST = async (req: Request) => {

@@ -1,12 +1,10 @@
-
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./../globals.css";
+import "../globals.css";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
+import { I18nProviderClient } from "../../locales/client";
 import { Providers } from "../providers";
-import I18nProvider from "../i18n-provider";
-
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,25 +24,26 @@ export const metadata: Metadata = {
 export default async function RootLayout({ 
   children,
   params,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-  params: { locale: string };
-}>) {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
 
   return (
     <html
-      lang="en"
+      lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning={true}>
-        <I18nProvider>
+        <I18nProviderClient locale={locale}>
           <Providers>
             <Navbar />
             <main className="flex-grow">{children}</main>
             <Footer />
           </Providers>
-        </I18nProvider>
+        </I18nProviderClient>
       </body>
     </html>
   );
