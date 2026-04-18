@@ -3,6 +3,7 @@ export default {
   'home.description': 'Genera flashcards a partir de tus documentos',
   'home.generate': 'Generar Flashcards',
   'navbar.signin': 'Iniciar Sesión',
+  'navbar.profile': 'Perfil',
   'generate.title': 'Flashcards Generadas',
   'generate.save': 'Guardar',
   'generate.collection.title': 'Introduce un título para tu colección de flashcards:',
