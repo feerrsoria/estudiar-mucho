@@ -36,5 +36,10 @@ export default {
   "collections.search": "Search",
   "collections.sort_by": "Sort by",
   "collections.sort.desc": "Date (Newest)",
-  "collections.sort.asc": "Date (Oldest)"
+  "collections.sort.asc": "Date (Oldest)",
+  "settings.first_name": "First Name",
+  "settings.last_name": "Last Name",
+  "settings.birth_date": "Birth Date",
+  "settings.save": "Save",
+  "settings.signin": "Please sign in to see your settings."
 } as const;

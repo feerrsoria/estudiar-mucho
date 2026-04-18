@@ -36,5 +36,10 @@ export default {
   "collections.search": "Buscar",
   "collections.sort_by": "Ordenar por",
   "collections.sort.desc": "Fecha (Más nuevos)",
-  "collections.sort.asc": "Fecha (Más antiguos)"
+  "collections.sort.asc": "Fecha (Más antiguos)",
+  "settings.first_name": "Nombre",
+  "settings.last_name": "Apellido",
+  "settings.birth_date": "Fecha de Nacimiento",
+  "settings.save": "Guardar",
+  "settings.signin": "Por favor, inicia sesión para ver tu configuración."
 } as const;

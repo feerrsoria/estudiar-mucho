@@ -51,6 +51,10 @@ class AuthService implements AuthInterface {
   async signOut(): Promise<void> {
     await this.supabase.auth.signOut();
   }
+
+  async updateUser(data: any) {
+    await this.supabase.auth.updateUser({ data });
+  }
 }
 
 const authService = new AuthService();
