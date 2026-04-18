@@ -32,5 +32,9 @@ export default {
   "collections.title": "Mis Colecciones",
   "collections.add": "Agregar nueva colección",
   "collections.signin": "Por favor, inicia sesión para ver tus colecciones.",
-  "settings.title": "Configuración"
+  "settings.title": "Configuración",
+  "collections.search": "Buscar",
+  "collections.sort_by": "Ordenar por",
+  "collections.sort.desc": "Fecha (Más nuevos)",
+  "collections.sort.asc": "Fecha (Más antiguos)"
 } as const;
