@@ -6,6 +6,8 @@ export interface Collection {
   user_id: string;
   name: string;
   file_name?: string;
+  card_count?: number;
+  created_at?: string;
 }
 
 export interface DatabaseInterface {
@@ -39,7 +41,24 @@ class DatabaseService implements DatabaseInterface {
       console.error(error);
       return [];
     }
-    return data;
+
+    const collectionsWithCardCount = await Promise.all(
+      data.map(async (collection) => {
+        const { data: cards, error: cardsError } = await this.supabase
+          .from("cards")
+          .select("id", { count: "exact" })
+          .eq("collection_id", collection.id);
+
+        if (cardsError) {
+          console.error(cardsError);
+          return { ...collection, card_count: 0 };
+        }
+
+        return { ...collection, card_count: cards.length };
+      })
+    );
+
+    return collectionsWithCardCount;
   }
 
   async createCard(card: Card): Promise<Card | null> {

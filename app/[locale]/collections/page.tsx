@@ -38,6 +38,10 @@ export default function Collections() {
             <div key={collection.id} className="p-4 border rounded-md mb-4">
               <Typography variant="h5">{collection.name}</Typography>
               <Typography variant="body2">{collection.file_name}</Typography>
+              <Typography variant="body2">Cards: {collection.card_count}</Typography>
+              {collection.created_at && (
+                <Typography variant="body2">Created at: {new Date(collection.created_at).toLocaleDateString()}</Typography>
+              )}
             </div>
           ))}
         </div>
