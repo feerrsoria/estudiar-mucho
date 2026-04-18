@@ -28,5 +28,9 @@ export default {
   "signup.email": "Email",
   "signup.password": "Password",
   "signin.noaccount": "Don't have an account? Sign up",
-  "signup.haveaccount": "Already have an account? Sign in"
+  "signup.haveaccount": "Already have an account? Sign in",
+  "collections.title": "My Collections",
+  "collections.add": "Add new collection",
+  "collections.signin": "Please sign in to see your collections.",
+  "settings.title": "Settings"
 } as const;

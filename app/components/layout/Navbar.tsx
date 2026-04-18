@@ -66,7 +66,7 @@ export default function Navbar() {
               <MenuItem onClick={() => setAnchorEl(null)} component={Link} href="/profile">
                 {t("navbar.settings")}
               </MenuItem>
-              <MenuItem onClick={() => setAnchorEl(null)} component={Link} href="/profile">
+              <MenuItem onClick={() => setAnchorEl(null)} component={Link} href="/collections">
                 {t("navbar.my_collections")}
               </MenuItem>
               <MenuItem onClick={() => { setAnchorEl(null); AuthService.signOut(); }}>
