@@ -6,4 +6,5 @@ export interface Card {
   page: number;
   title: string;
   subtitle?: string;
+  collection_id?: string;
 }

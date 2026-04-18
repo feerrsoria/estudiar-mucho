@@ -10,6 +10,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useI18n } from "../../../locales/client";
 import { User } from "@supabase/supabase-js";
 import { Card } from "../../types";
+import DatabaseService from "../../services/database";
 
 export default function GeneratePage() {
   const [questions, setQuestions] = useState<Card[]>([]);
@@ -102,13 +103,29 @@ export default function GeneratePage() {
       router.push("/signin?redirect_uri=/generate");
       return;
     }
-    const { error } = await saveFlashcards(questions);
-    if (error) {
-      alert(error);
-    } else {
-      const title = prompt(t("generate.collection.title"));
-      // Here you would typically save the title to the database
-      alert(`${t("generate.saved.success")}${title}`);
+
+    const title = prompt(t("generate.collection.title"));
+    if (!title) return;
+
+    const newCollection = await DatabaseService.createCollection({
+      name: title,
+      user_id: user.id,
+    });
+
+    if (newCollection && newCollection.id) {
+      const cardsWithCollection = questions.map((card) => ({
+        ...card,
+        collection_id: newCollection.id,
+      }));
+
+      const { error } = await saveFlashcards(cardsWithCollection);
+
+      if (error) {
+        alert(error);
+      } else {
+        alert(`${t("generate.saved.success")}${title}`);
+        router.push("/profile");
+      }
     }
   };
 
