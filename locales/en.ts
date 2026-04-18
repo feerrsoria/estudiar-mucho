@@ -14,6 +14,7 @@ export default {
   'signin.title': 'Sign In',
   'signin.email': 'Email',
   'signin.password': 'Password',
+  "hero.badge": "AI-Powered Learning for Students",
   "hero.title": "Learn anything, faster.",
   "hero.subtitle": "Upload a file and customize your flashcards. You can specify chapters, pages, or even ask for translations.",
   "hero.file.label": "File (PDF, PPTX, DOCX)",

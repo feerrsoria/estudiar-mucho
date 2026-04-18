@@ -1,10 +1,5 @@
-
-import { createClient } from "@supabase/supabase-js";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabasePublishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
-
-const supabase = createClient(supabaseUrl, supabasePublishableKey);
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../lib/firebase/config";
 
 export interface FileInterface {
   upload(file: File): Promise<string | null>;
@@ -13,15 +8,12 @@ export interface FileInterface {
 class FileService implements FileInterface {
   async upload(file: File): Promise<string | null> {
     try {
-      const { data, error } = await supabase.storage
-        .from("estudiar-mucho")
-        .upload(file.name, file);
-      if (error) {
-        throw error;
-      }
-      return data ? data.path : null;
+      const storageRef = ref(storage, `uploads/${Date.now()}_${file.name}`);
+      const snapshot = await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      return downloadURL;
     } catch (error) {
-      console.error(error);
+      console.error("Error uploading file:", error);
       return null;
     }
   }

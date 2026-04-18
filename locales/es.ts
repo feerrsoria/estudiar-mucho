@@ -14,6 +14,7 @@ export default {
   'signin.title': 'Iniciar Sesión',
   'signin.email': 'Correo Electrónico',
   'signin.password': 'Contraseña',
+  "hero.badge": "Aprendizaje con IA para Estudiantes",
   "hero.title": "Aprende cualquier cosa, más rápido.",
   "hero.subtitle": "Sube un archivo y personaliza tus flashcards. Puedes especificar capítulos, páginas o incluso pedir traducciones.",
   "hero.file.label": "Archivo (PDF, PPTX, DOCX)",

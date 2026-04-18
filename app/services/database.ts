@@ -1,4 +1,10 @@
-import { createClient } from "../lib/supabase/client";
+import { 
+  createDocument, 
+  fetchDocuments, 
+  updateDocument, 
+  removeDocument 
+} from "../lib/firebase/firestore";
+import { where } from "firebase/firestore";
 import { Card } from "../types";
 
 export interface Collection {
@@ -20,88 +26,81 @@ export interface DatabaseInterface {
 }
 
 class DatabaseService implements DatabaseInterface {
-  public supabase = createClient();
-
   async createCollection(collection: Collection): Promise<Collection | null> {
-    const { data, error } = await this.supabase
-      .from("collections")
-      .insert(collection)
-      .select();
-    if (error) {
-      console.error(error);
+    try {
+      const docRef = await createDocument("collections", {
+        ...collection,
+        created_at: new Date().toISOString()
+      });
+      return { id: docRef.id, ...collection } as Collection;
+    } catch (error) {
+      console.error("Error creating collection:", error);
       return null;
     }
-    return data[0];
   }
 
   async getCollections(userId: string): Promise<Collection[]> {
-    const { data, error } = await this.supabase
-      .from("collections")
-      .select("*")
-      .eq("user_id", userId);
-    if (error) {
-      console.error(error);
+    try {
+      const collections = await fetchDocuments("collections", [
+        where("user_id", "==", userId)
+      ]);
+      
+      const collectionsWithCardCount = await Promise.all(
+        collections.map(async (col) => {
+          const cards = await fetchDocuments("cards", [
+            where("collection_id", "==", col.id)
+          ]);
+          return { 
+            ...col, 
+            card_count: cards.length 
+          } as Collection;
+        })
+      );
+
+      return collectionsWithCardCount;
+    } catch (error) {
+      console.error("Error getting collections:", error);
       return [];
     }
-
-    const collectionsWithCardCount = await Promise.all(
-      data.map(async (collection) => {
-        const { data: cards, error: cardsError } = await this.supabase
-          .from("cards")
-          .select("id", { count: "exact" })
-          .eq("collection_id", collection.id);
-
-        if (cardsError) {
-          console.error(cardsError);
-          return { ...collection, card_count: 0 };
-        }
-
-        return { ...collection, card_count: cards.length };
-      })
-    );
-
-    return collectionsWithCardCount;
   }
 
   async updateCollection(collectionId: string, name: string): Promise<Collection | null> {
-    const { data, error } = await this.supabase
-      .from("collections")
-      .update({ name })
-      .eq("id", collectionId)
-      .select();
-
-    if (error) {
-      console.error(error);
+    try {
+      await updateDocument("collections", collectionId, { name });
+      return { id: collectionId, name } as any;
+    } catch (error) {
+      console.error("Error updating collection:", error);
       return null;
     }
-    return data[0];
   }
 
   async createCard(card: Card): Promise<Card | null> {
-    const { data, error } = await this.supabase.from("cards").insert(card).select();
-    if (error) {
-      console.error(error);
+    try {
+      const docRef = await createDocument("cards", card);
+      return { id: docRef.id, ...card };
+    } catch (error) {
+      console.error("Error creating card:", error);
       return null;
     }
-    return data[0];
   }
 
   async getCards(collectionId: string): Promise<Card[]> {
-    const { data, error } = await this.supabase
-      .from("cards")
-      .select("*")
-      .eq("collection_id", collectionId);
-    if (error) {
-      console.error(error);
+    try {
+      const cards = await fetchDocuments("cards", [
+        where("collection_id", "==", collectionId)
+      ]);
+      return cards as unknown as Card[];
+    } catch (error) {
+      console.error("Error getting cards:", error);
       return [];
     }
-    return data;
   }
 
   async deleteCard(cardId: string): Promise<void> {
-    const { error } = await this.supabase.from("cards").delete().eq("id", cardId);
-    if (error) {
-      console.error(error);
+    try {
+      await removeDocument("cards", cardId);
+    } catch (error) {
+      console.error("Error deleting card:", error);
     }
   }
 }

@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { parseFile } from "../../actions";
 import { useI18n } from "../../../locales/client";
+import { Upload, Sparkles, FileText, Send, Loader2 } from "lucide-react";
+import { TextField, InputAdornment } from "@mui/material";
 
 export default function Hero() {
   const [file, setFile] = useState<File | null>(null);
@@ -37,7 +39,7 @@ export default function Hero() {
         },
         body: JSON.stringify({ 
           text, 
-          userInstructions: prompt // Enviamos el prompt como instrucciones personalizadas
+          userInstructions: prompt
         }),
       });
 
@@ -60,41 +62,103 @@ export default function Hero() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center text-center py-20 px-4">
-      <h1 className="text-5xl font-bold">{t("hero.title")}</h1>
-      <p className="text-xl text-gray-500 mt-4 max-w-2xl">
-        {t("hero.subtitle")}
-      </p>
-      
-      <div className="mt-8 w-full max-w-md flex flex-col gap-4">
-        <div className="flex flex-col text-left">
-          <label className="text-sm font-medium text-gray-700 mb-1">{t("hero.file.label")}</label>
-          <input 
-            type="file" 
-            onChange={handleFileChange} 
-            className="w-full px-4 py-2 border border-gray-300 rounded-md bg-white" 
+    <div className="relative overflow-hidden py-24 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+      {/* Background Glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-96 bg-primary/20 blur-[120px] rounded-full -z-10" />
+
+      <div className="text-center space-y-8 max-w-4xl">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-effect border border-primary/20 text-primary text-sm font-bold animate-bounce">
+          <Sparkles size={16} />
+          {t("hero.badge") || "Inteligencia Artificial para Estudiantes"}
+        </div>
+        
+        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-tight">
+          {t("hero.title").split(" ").map((word, i) => (
+            <span key={i} className={i % 2 === 1 ? "bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent" : ""}>
+              {word}{" "}
+            </span>
+          ))}
+        </h1>
+        
+        <p className="text-xl text-foreground/60 max-w-2xl mx-auto leading-relaxed">
+          {t("hero.subtitle")}
+        </p>
+      </div>
+
+      <div className="mt-16 w-full max-w-2xl glass-effect p-8 md:p-12 rounded-[40px] border border-white/10 shadow-2xl space-y-8">
+        <div className="space-y-4">
+          <label className="flex items-center gap-2 text-sm font-bold text-foreground/60 ml-1">
+            <FileText size={18} />
+            {t("hero.file.label")}
+          </label>
+          <div className="relative group">
+            <input 
+              type="file" 
+              onChange={handleFileChange} 
+              id="file-upload"
+              className="hidden" 
+            />
+            <label 
+              htmlFor="file-upload"
+              className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-primary/20 rounded-3xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all group"
+            >
+              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                <Upload className={`w-10 h-10 mb-3 ${file ? 'text-green-500' : 'text-primary'} group-hover:scale-110 transition-transform`} />
+                <p className="text-sm font-semibold">
+                  {file ? file.name : "Selecciona o arrastra un archivo"}
+                </p>
+                <p className="text-xs text-foreground/40 mt-1">PDF, DOCX, PPTX o TXT</p>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <label className="flex items-center gap-2 text-sm font-bold text-foreground/60 ml-1">
+            <Send size={18} />
+            {t("hero.prompt.label")}
+          </label>
+          <TextField
+            fullWidth
+            multiline
+            rows={4}
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder={t("hero.prompt.placeholder")}
+            variant="outlined"
+            slotProps={{
+              input: {
+                className: "rounded-3xl bg-background/50 border-white/10 p-4"
+              }
+            }}
           />
         </div>
 
-        <div className="flex flex-col text-left">
-          <label className="text-sm font-medium text-gray-700 mb-1">{t("hero.prompt.label")}</label>
-          <textarea 
-            value={prompt} 
-            onChange={(e) => setPrompt(e.target.value)} 
-            placeholder={t("hero.prompt.placeholder")} 
-            className="w-full px-4 py-2 border border-gray-300 rounded-md h-32 resize-none" 
-          />
+        <div className="pt-4">
+          <button 
+            onClick={handleSubmit} 
+            disabled={loading}
+            className="premium-button w-full flex items-center justify-center gap-3 py-4 text-lg"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="animate-spin" />
+                {t("hero.submit.loading")}
+              </>
+            ) : (
+              <>
+                <Sparkles size={20} />
+                {t("hero.submit.button")}
+              </>
+            )}
+          </button>
+          
+          {error && (
+            <div className="mt-4 p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-500 text-sm font-medium text-center">
+              {error}
+            </div>
+          )}
         </div>
-
-        <button 
-          onClick={handleSubmit} 
-          className="px-8 py-3 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors disabled:bg-blue-400" 
-          disabled={loading}
-        >
-          {loading ? t("hero.submit.loading") : t("hero.submit.button")}
-        </button>
-
-        {error && <p className="text-red-500 text-sm mt-2 font-medium">{error}</p>}
       </div>
     </div>
   );

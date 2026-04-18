@@ -1,15 +1,10 @@
 import { describe, it, expect, vi } from "vitest";
 import { saveFlashcards, parseFile } from "../actions";
 
-vi.mock("../lib/supabase/server", () => ({
-  createClient: vi.fn(() => ({
-    auth: {
-      getUser: vi.fn(() => Promise.resolve({ data: { user: { id: "123" } } }))
-    },
-    from: vi.fn(() => ({
-      insert: vi.fn(() => Promise.resolve({ data: {}, error: null }))
-    }))
-  }))
+vi.mock("../services/database", () => ({
+  default: {
+    createCard: vi.fn(() => Promise.resolve({ id: "123" }))
+  }
 }));
 
 vi.mock("pdf-parse-fork", () => ({
@@ -40,6 +35,7 @@ describe("actions", () => {
     const cards = [{ question: "q1", answer: "a1", page: 1, title: "t1" }];
     const result = await saveFlashcards(cards);
     expect(result.error).toBeUndefined();
+    expect(result.data).toBeDefined();
   });
 
   it("should parse a pdf file", async () => {

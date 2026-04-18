@@ -12,13 +12,17 @@ vi.mock("next/navigation", () => ({
   }),
 }));
 
-vi.mock("next-international/client", () => ({
-  createI18nClient: () => ({
-    useI18n: () => (key: string) => key,
-    I18nProviderClient: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-    useChangeLocale: () => () => {},
-    useCurrentLocale: () => "en",
-  }),
+vi.mock("../lib/firebase/config", () => ({
+  app: {},
+  auth: {},
+  db: {},
+  storage: {},
+}));
+
+vi.mock("../../../locales/client", () => ({
+  useI18n: () => (key: string) => key,
+  useChangeLocale: () => () => {},
+  useCurrentLocale: () => "en",
 }));
 
 describe("Hero", () => {

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -6,6 +5,8 @@ import AuthService from "../../services/auth";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useI18n } from "../../../locales/client";
 import I18nLink from "../../components/i18n-link";
+import { LogIn, Mail, Lock, Globe } from "lucide-react";
+import { TextField, InputAdornment } from "@mui/material";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
@@ -19,73 +20,105 @@ export default function SignIn() {
     if (user) {
       const redirectUri = searchParams.get("redirect_uri");
       router.push(redirectUri || "/profile");
+    } else {
+      alert("Credenciales inválidas");
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await AuthService.signInWithGoogle();
+      const redirectUri = searchParams.get("redirect_uri");
+      router.push(redirectUri || "/profile");
+    } catch (err) {
+      console.error(err);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-light dark:bg-gray-dark">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
-        <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md space-y-8 glass-effect p-10 rounded-3xl border border-white/10 shadow-2xl">
+        <div className="text-center space-y-2">
+          <div className="inline-flex p-4 rounded-2xl bg-primary/10 text-primary mb-2">
+            <LogIn size={32} />
+          </div>
+          <h2 className="text-3xl font-extrabold tracking-tight">
             {t("signin.title")}
           </h2>
+          <p className="text-foreground/60">Bienvenido de nuevo</p>
         </div>
+
         <form className="mt-8 space-y-6" onSubmit={(e) => e.preventDefault()}>
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <input
-                id="email-address"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="relative block w-full px-3 py-2 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-none appearance-none rounded-t-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                placeholder={t("signin.email")}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                className="relative block w-full px-3 py-2 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-none appearance-none rounded-b-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                placeholder={t("signin.password")}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+          <div className="space-y-4">
+            <TextField
+              fullWidth
+              label={t("signin.email")}
+              variant="outlined"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Mail size={20} className="text-foreground/40" />
+                    </InputAdornment>
+                  ),
+                  className: "rounded-2xl bg-background/50"
+                }
+              }}
+            />
+            <TextField
+              fullWidth
+              label={t("signin.password")}
+              type="password"
+              variant="outlined"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Lock size={20} className="text-foreground/40" />
+                    </InputAdornment>
+                  ),
+                  className: "rounded-2xl bg-background/50"
+                }
+              }}
+            />
           </div>
 
-          <div>
-            <button
-              type="submit"
-              onClick={handleSignIn}
-              className="relative flex justify-center w-full px-4 py-2 text-sm font-medium text-white border border-transparent rounded-md group bg-primary hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-              style={{ backgroundColor: '#2c6df9' }}
-            >
-              {t("signin.title")}
-            </button>
-          </div>
-        </form>
-        <div className="flex items-center justify-center">
-          <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
-          <div className="px-2 text-sm text-gray-600 dark:text-gray-400">Or</div>
-          <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
-        </div>
-        <div>
           <button
-            onClick={() => AuthService.signInWithGoogle()}
-            className="relative flex justify-center w-full px-4 py-2 text-sm font-medium text-white border border-transparent rounded-md group bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+            type="submit"
+            onClick={handleSignIn}
+            className="premium-button w-full flex items-center justify-center gap-2 py-3"
           >
-            {t("signin.google")}
+            {t("signin.title")}
           </button>
+        </form>
+
+        <div className="relative my-8">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-white/10"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-4 bg-background text-foreground/40">O continúa con</span>
+          </div>
         </div>
-        <div className="text-sm text-center">
-          <I18nLink href="/signup" i18nKey="signin.noaccount" />
+
+        <button
+          onClick={handleGoogleSignIn}
+          className="w-full flex items-center justify-center gap-3 py-3 rounded-2xl border border-white/10 hover:bg-white/5 transition-all font-semibold"
+        >
+          <Globe size={20} className="text-red-500" />
+          Google
+        </button>
+
+        <div className="text-center pt-4">
+          <I18nLink 
+            href="/signup" 
+            i18nKey="signin.noaccount" 
+            className="text-primary hover:underline font-medium" 
+          />
         </div>
       </div>
     </div>

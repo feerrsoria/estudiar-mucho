@@ -2,25 +2,19 @@
 
 import mammoth from "mammoth";
 import JSZip from "jszip";
-import { createClient } from "./lib/supabase/server";
-
+import databaseService from "./services/database";
 import { Card } from "./types";
 
 export async function saveFlashcards(cards: Card[]) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (user) {
-    const { data, error } = await supabase.from("cards").insert(
-      cards.map(card => ({ ...card, user_id: user.id }))
+  try {
+    const results = await Promise.all(
+      cards.map(card => databaseService.createCard(card))
     );
-    if (error) {
-      console.error("Error saving flashcards:", error);
-      return { error };
-    }
-    return { data };
+    return { data: results };
+  } catch (error) {
+    console.error("Error saving flashcards:", error);
+    return { error: "Failed to save flashcards" };
   }
-  return { error: "User not authenticated" };
 }
 
 export async function parseFile(file: File) {
@@ -60,8 +54,8 @@ export async function parseFile(file: File) {
 
   } catch (error) {
     if (error instanceof Error) {
-      console.error("Error parseando archivo:", error.message);
+      console.error("Error parsing file:", error.message);
     }
-    throw new Error("No se pudo extraer el texto del archivo");
+    throw new Error("Could not extract text from file");
   }
 }

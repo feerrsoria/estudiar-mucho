@@ -1,26 +1,24 @@
-
 import { test, expect, vi } from "vitest";
 import FileService from "../services/file";
-import { createClient } from "@supabase/supabase-js";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-const mockUpload = vi.fn();
-
-vi.mock("@supabase/supabase-js", () => ({
-  createClient: vi.fn(() => ({
-    storage: {
-      from: vi.fn(() => ({
-        upload: mockUpload,
-      })),
-    },
-  })),
+vi.mock("firebase/storage", () => ({
+  ref: vi.fn(),
+  uploadBytes: vi.fn().mockResolvedValue({ ref: {} }),
+  getDownloadURL: vi.fn().mockResolvedValue("https://example.com/test.txt"),
 }));
 
-test("should upload a file", async () => {
-  const file = new File([""], "test.txt");
-  const path = "test.txt";
-  mockUpload.mockResolvedValue({ data: { path }, error: null });
+vi.mock("../lib/firebase/config", () => ({
+  storage: {},
+}));
 
+test("should upload a file to Firebase Storage", async () => {
+  const file = new File([""], "test.txt");
+  
   const result = await FileService.upload(file);
 
-  expect(result).toEqual(path);
+  expect(ref).toHaveBeenCalled();
+  expect(uploadBytes).toHaveBeenCalled();
+  expect(getDownloadURL).toHaveBeenCalled();
+  expect(result).toEqual("https://example.com/test.txt");
 });
