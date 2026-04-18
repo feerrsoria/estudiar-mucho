@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# credentials
+gcp-credentials.json
+project-02742a3b-1ce8-432e-91c-cbd5dba005bb.json
