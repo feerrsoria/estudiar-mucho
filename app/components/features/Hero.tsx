@@ -28,7 +28,7 @@ export default function Hero() {
     setLoading(true);
     setError(null);
     try {
-      const text = await parseFile(file);
+      const { text, fileName } = await parseFile(file);
       
       const response = await fetch("/api/generate", {
         method: "POST",
@@ -48,6 +48,7 @@ export default function Hero() {
 
       const data = await response.json();
       localStorage.setItem("questions", JSON.stringify(data.questions));
+      localStorage.setItem("fileName", fileName);
       router.push("/generate");
     } catch (error) {
       if (error instanceof Error) {

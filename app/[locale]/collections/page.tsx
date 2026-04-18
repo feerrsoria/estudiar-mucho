@@ -37,6 +37,7 @@ export default function Collections() {
           {collections.map((collection) => (
             <div key={collection.id} className="p-4 border rounded-md mb-4">
               <Typography variant="h5">{collection.name}</Typography>
+              <Typography variant="body2">{collection.file_name}</Typography>
             </div>
           ))}
         </div>

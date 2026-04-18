@@ -26,17 +26,18 @@ export async function saveFlashcards(cards: Card[]) {
 export async function parseFile(file: File) {
   const arrayBuffer = await file.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
+  const fileName = file.name;
 
   try {
     if (file.type === "application/pdf") {
       const pdf = (await import("pdf-parse-fork")).default;
       const data = await pdf(buffer);
-      return data.text.trim();
+      return { text: data.text.trim(), fileName };
     } 
     
     if (file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
       const { value } = await mammoth.extractRawText({ buffer });
-      return value.trim();
+      return { text: value.trim(), fileName };
     } 
 
     if (file.type === "application/vnd.openxmlformats-officedocument.presentationml.presentation") {
@@ -52,10 +53,10 @@ export async function parseFile(file: File) {
           return textNodes.map(node => node.replace(/<\/?a:t>/g, "")).join(" ");
         })
       );
-      return slideTexts.join("\n").trim();
+      return { text: slideTexts.join("\n").trim(), fileName };
     } 
 
-    return buffer.toString("utf-8").trim();
+    return { text: buffer.toString("utf-8").trim(), fileName };
 
   } catch (error) {
     if (error instanceof Error) {

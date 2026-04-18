@@ -14,6 +14,7 @@ import DatabaseService from "../../services/database";
 
 export default function GeneratePage() {
   const [questions, setQuestions] = useState<Card[]>([]);
+  const [fileName, setFileName] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedCard, setSelectedCard] = useState(0);
@@ -34,11 +35,13 @@ export default function GeneratePage() {
     checkUser();
     const loadQuestions = () => {
       const storedQuestions = localStorage.getItem("questions");
+      const storedFileName = localStorage.getItem("fileName");
       if (storedQuestions) {
         try {
           const parsedQuestions = JSON.parse(storedQuestions);
           if (Array.isArray(parsedQuestions)) {
             setQuestions(parsedQuestions);
+            setFileName(storedFileName);
           }
         } catch (error) {
           console.error("Error parsing questions from local storage", error);
@@ -110,6 +113,7 @@ export default function GeneratePage() {
     const newCollection = await DatabaseService.createCollection({
       name: title,
       user_id: user.id,
+      file_name: fileName ?? undefined,
     });
 
     if (newCollection && newCollection.id) {
@@ -124,7 +128,7 @@ export default function GeneratePage() {
         alert(error);
       } else {
         alert(`${t("generate.saved.success")}${title}`);
-        router.push("/profile");
+        router.push("/collections");
       }
     }
   };
