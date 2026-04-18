@@ -41,5 +41,6 @@ export default {
   "settings.last_name": "Last Name",
   "settings.birth_date": "Birth Date",
   "settings.save": "Save",
-  "settings.signin": "Please sign in to see your settings."
+  "settings.signin": "Please sign in to see your settings.",
+  "generate.collection.name": "Collection Name"
 } as const;

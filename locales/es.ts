@@ -41,5 +41,6 @@ export default {
   "settings.last_name": "Apellido",
   "settings.birth_date": "Fecha de Nacimiento",
   "settings.save": "Guardar",
-  "settings.signin": "Por favor, inicia sesión para ver tu configuración."
+  "settings.signin": "Por favor, inicia sesión para ver tu configuración.",
+  "generate.collection.name": "Nombre de la Colección"
 } as const;
