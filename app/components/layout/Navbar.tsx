@@ -8,7 +8,7 @@ import ReactFlagsSelect from "react-flags-select";
 import { useTheme } from "next-themes";
 import AuthService from "../../services/auth";
 import { User } from "firebase/auth";
-import { Button, Menu, MenuItem, Avatar, IconButton } from "@mui/material";
+import { Button, Menu, MenuItem, Avatar, IconButton, Tooltip } from "@mui/material";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,40 +28,49 @@ export default function Navbar() {
   if (!mounted) return null;
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 w-full glass-effect px-4 sm:px-8 py-3 flex items-center justify-between">
+    <nav className="fixed top-0 left-0 right-0 z-50 w-full glass-effect px-4 sm:px-8 py-3 flex items-center justify-between border-b border-white/10 shadow-lg">
       <Link href="/" className="text-2xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent hover:opacity-80 transition-opacity">
         Estudiar Mucho
       </Link>
 
       <div className="hidden md:flex items-center gap-6">
         <div className="flex items-center gap-2">
-          <ReactFlagsSelect
-            selected={locale === "en" ? "GB" : "AR"}
-            onSelect={(code) => changeLocale(code === "GB" ? "en" : "es")}
-            countries={["GB", "AR"]}
-            customLabels={{ GB: "EN", AR: "ES" }}
-            placeholder="Language"
-            className="premium-flags"
-          />
+          <Tooltip title={t("navbar.language")} arrow>
+            <ReactFlagsSelect
+              selected={locale === "en" ? "GB" : "AR"}
+              onSelect={(code) => changeLocale(code === "GB" ? "en" : "es")}
+              countries={["GB", "AR"]}
+              customLabels={{ GB: "EN", AR: "ES" }}
+              placeholder="Language"
+              className="premium-flags"
+            />
+          </Tooltip>
         </div>
 
-        <IconButton
-          onClick={() => setTheme(theme === "light" ? "dark" : theme === "dark" ? "system" : "light")}
-          className="text-foreground hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
-        >
-          {theme === "light" ? <Sun size={20} /> : theme === "dark" ? <Moon size={20} /> : <Monitor size={20} />}
-        </IconButton>
+        <Tooltip title={t("navbar.theme")} arrow>
+          <IconButton
+            onClick={() => setTheme(theme === "light" ? "dark" : theme === "dark" ? "system" : "light")}
+            className="text-foreground hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+          >
+            {theme === "light" ? <Sun size={20} /> : theme === "dark" ? <Moon size={20} /> : <Monitor size={20} />}
+          </IconButton>
+        </Tooltip>
 
         {user ? (
           <div className="flex items-center gap-3">
-            <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
-              <Avatar 
-                src={user.photoURL || undefined} 
-                className="w-9 h-9 border-2 border-primary/20"
-              >
-                {!user.photoURL && <UserIcon size={18} />}
-              </Avatar>
-            </IconButton>
+            <Button component={Link} href="/collections" variant="contained" color="primary" className="premium-button">
+              {t("navbar.my_collections")}
+            </Button>
+            <Tooltip title={t("navbar.profile")} arrow>
+              <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
+                <Avatar 
+                  src={user.photoURL || undefined} 
+                  className="w-9 h-9 border-2 border-primary/20"
+                >
+                  {!user.photoURL && <UserIcon size={18} />}
+                </Avatar>
+              </IconButton>
+            </Tooltip>
             <Menu
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}

@@ -51,9 +51,9 @@ export default function FlippableCard({ question, answer, page, title, subtitle,
                   )}
                 </div>
               )}
-              <div className="flex-grow flex items-center justify-center overflow-y-auto min-h-0 py-4">
+              <div className="flex-grow flex items-center justify-center overflow-y-auto no-scrollbar min-h-0 py-4">
                 <Typography
-                  className={`${size === "large" ? "text-base sm:text-xl" : "text-xs sm:text-sm"} whitespace-normal break-words font-medium px-2 text-foreground leading-relaxed`}
+                  className={`${size === "large" ? "text-base sm:text-xl" : "text-xs"} whitespace-normal break-words font-medium px-2 text-foreground leading-relaxed`}
                 >
                   {question}
                 </Typography>
@@ -67,9 +67,9 @@ export default function FlippableCard({ question, answer, page, title, subtitle,
         <div className="absolute w-full h-full backface-hidden rotate-y-180">
           <Card className="w-full h-full rounded-2xl overflow-hidden border border-white/10 glass-effect">
             <CardContent className="h-full flex flex-col p-6 text-center bg-primary/5">
-              <div className="flex-grow flex items-center justify-center overflow-y-auto min-h-0 py-4">
+              <div className="flex-grow flex items-center justify-center overflow-y-auto no-scrollbar min-h-0 py-4">
                 <Typography 
-                  className={`${size === "large" ? "text-base sm:text-xl" : "text-xs sm:text-sm"} font-medium px-2 text-foreground leading-relaxed`}
+                  className={`${size === "large" ? "text-base sm:text-xl" : "text-xs"} font-medium px-2 text-foreground leading-relaxed`}
                 >
                   {answer}
                 </Typography>

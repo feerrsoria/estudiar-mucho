@@ -135,7 +135,7 @@ export default function StudyPage() {
             <div 
               ref={scrollContainerRef} 
               onScroll={handleScroll} 
-              className="w-full overflow-x-auto whitespace-nowrap py-8 no-scrollbar scroll-smooth"
+              className="w-full overflow-x-auto whitespace-nowrap py-8 scroll-smooth no-scrollbar"
             >
               <div className="flex gap-6 px-4">
                 {loading
