@@ -2,6 +2,7 @@ import {
   collection, 
   addDoc, 
   getDocs, 
+  getDoc,
   doc, 
   updateDoc, 
   deleteDoc,
@@ -25,6 +26,12 @@ export const fetchDocuments = async (colName: string, constraints: QueryConstrai
     id: doc.id,
     ...doc.data()
   })) as (DocumentData & { id: string })[];
+};
+
+export const fetchDocumentById = async (colName: string, docId: string) => {
+  const docRef = doc(db, colName, docId);
+  const docSnap = await getDoc(docRef);
+  return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } : null;
 };
 
 export const updateDocument = async (colName: string, docId: string, data: any) => {

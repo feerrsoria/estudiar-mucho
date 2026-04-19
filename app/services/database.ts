@@ -2,7 +2,8 @@ import {
   createDocument, 
   fetchDocuments, 
   updateDocument, 
-  removeDocument 
+  removeDocument,
+  fetchDocumentById
 } from "../lib/firebase/firestore";
 import { where } from "firebase/firestore";
 import { Card } from "../types";
@@ -23,6 +24,7 @@ export interface DatabaseInterface {
   createCard(card: Card): Promise<Card | null>;
   getCards(collectionId: string): Promise<Card[]>;
   deleteCard(cardId: string): Promise<void>;
+  getCollection(collectionId: string): Promise<Collection | null>;
 }
 
 class DatabaseService implements DatabaseInterface {
@@ -101,6 +103,16 @@ class DatabaseService implements DatabaseInterface {
       await removeDocument("cards", cardId);
     } catch (error) {
       console.error("Error deleting card:", error);
+    }
+  }
+
+  async getCollection(collectionId: string): Promise<Collection | null> {
+    try {
+      const collection = await fetchDocumentById("collections", collectionId);
+      return collection as Collection;
+    } catch (error) {
+      console.error("Error getting collection:", error);
+      return null;
     }
   }
 }
