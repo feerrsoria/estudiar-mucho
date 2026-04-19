@@ -28,7 +28,7 @@ export default function Navbar() {
   if (!mounted) return null;
 
   return (
-    <nav className="sticky top-0 z-50 w-full glass-effect px-4 sm:px-8 py-3 flex items-center justify-between">
+    <nav className="fixed top-0 left-0 right-0 z-50 w-full glass-effect px-4 sm:px-8 py-3 flex items-center justify-between">
       <Link href="/" className="text-2xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent hover:opacity-80 transition-opacity">
         Estudiar Mucho
       </Link>

@@ -28,6 +28,19 @@ export default function StudyPage() {
   const t = useI18n();
 
   useEffect(() => {
+    if (scrollContainerRef.current) {
+      const thumbnailsContainer = scrollContainerRef.current.querySelector('.flex.gap-6');
+      if (thumbnailsContainer && thumbnailsContainer.children[selectedCard]) {
+        thumbnailsContainer.children[selectedCard].scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "center",
+        });
+      }
+    }
+  }, [selectedCard]);
+
+  useEffect(() => {
     const unsubscribe = AuthService.onAuthStateChanged((user) => {
       setUser(user);
     });
@@ -81,11 +94,11 @@ export default function StudyPage() {
   };
 
   return (
-    <div className="min-h-[calc(100-72px)] py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto space-y-12">
+    <div className="min-h-screen pt-32 pb-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto space-y-6 sm:space-y-12">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="space-y-2 text-center md:text-left">
-            <h1 className="text-4xl font-extrabold tracking-tight flex items-center justify-center md:justify-start gap-3">
+            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight flex items-center justify-center md:justify-start gap-3">
               {collection?.name || "Study Session"}
             </h1>
             <p className="text-foreground/60 text-lg">
@@ -94,15 +107,15 @@ export default function StudyPage() {
           </div>
         </div>
 
-        <div className="flex flex-col items-center gap-12">
-          <div className="w-full max-w-2xl flex items-center justify-center min-h-[400px]">
+        <div className="flex flex-col items-center gap-6 sm:gap-12">
+          <div className="w-full max-w-2xl flex items-center justify-center min-h-[300px] sm:min-h-[400px]">
             {loading ? (
-              <div className="animate-pulse scale-110">
+              <div className="animate-pulse scale-100 sm:scale-110">
                 <SkeletonCard />
               </div>
             ) : (
               cards.length > 0 && (
-                <div className="transition-all duration-500 ease-out transform scale-110 hover:scale-[1.12]">
+                <div className="w-full max-w-sm sm:max-w-2xl transition-all duration-500 ease-out transform scale-100 sm:scale-110 hover:scale-[1.02] sm:hover:scale-[1.12]">
                   <FlippableCard {...cards[selectedCard]} size="large" />
                 </div>
               )
